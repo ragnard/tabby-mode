@@ -30,7 +30,7 @@
 
 (defcustom tabby-completion-function 'completing-read
   "Function to use when selecting a completion.
-Should have same signature as `completing-read`".
+Should have same signature as `completing-read`."
   :type 'symbol
   :group 'tabby)
 
