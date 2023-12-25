@@ -44,16 +44,16 @@
 
 (defun tabby--completions-request (lang prefix suffix)
   "Build a completions request for LANG with PREFIX and SUFFIX."
-  (json-encode
-   `((language . ,lang)
-     (segments . ((prefix . ,prefix)
-                  (suffix . ,suffix))))))
+  `((language . ,lang)
+    (segments . ((prefix . ,prefix)
+                 (suffix . ,suffix)))))
 
 (defun tabby--get-completions (buffer lang prefix suffix callback)
   "Send a completions request to the Tabby API."
-  (let ((url-request-method "POST")
-        (url-request-extra-headers `(("Content-Type" . "application/json")))
-        (url-request-data (tabby--completions-request lang prefix suffix)))
+  (let* ((request (tabby--completions-request lang prefix suffix))
+         (url-request-method "POST")
+         (url-request-extra-headers `(("Content-Type" . "application/json")))
+         (url-request-data (json-encode request)))
     (url-retrieve (tabby--completions-url)
                   (lambda (status)
                     (goto-char url-http-end-of-headers)
@@ -78,10 +78,10 @@ See https://code.visualstudio.com/docs/languages/identifiers."
 (defun tabby-complete ()
   "Ask Tabby for completion suggestions on the text around point."
   (interactive)
-  (let ((prefix (buffer-substring (point-min) (point)))
-        (suffix (when (< (point) (point-max))
-                  (buffer-substring (+ (point) 1) (point-max))))
-        (lang (tabby--determine-language)))
+  (let* ((lang (tabby--determine-language))
+         (prefix (buffer-substring (point-min) (point)))
+         (suffix (when (< (point) (point-max))
+                   (buffer-substring (+ (point) 1) (point-max)))))
     (if lang
         (tabby--get-completions (current-buffer) lang prefix suffix 'tabby--handle-completion-response)
       (message "Unable to determine language for current buffer."))))
