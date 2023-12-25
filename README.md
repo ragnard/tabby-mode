@@ -4,5 +4,6 @@ An Emacs minor mode for the [Tabby](https://tabby.tabbyml.com) AI coding assista
 
 ## Usage
 
-- TODO: Install
-- `M-x tabby-complete`
+- Install from [MELPA](https://melpa.org)
+- Set `tabby-api-url` to the URL of your Tabby server
+- Use `tabby-complete` to fetch completion suggestions from Tabby
