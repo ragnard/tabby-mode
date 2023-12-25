@@ -1,14 +1,19 @@
-;;; -*- lexical-binding: t; -*-
-;;; tabby-mode.el --- Minor mode for the Tabby AI coding assistant.
+;;; tabby-mode.el --- Minor mode for the Tabby AI coding assistant. -*- lexical-binding: t -*-
 
 ;;; Commentary:
 
 ;; Author: Ragnar Dahlén
 
-;;; Code
+;;; Code:
+
+(require 'json)
+(require 'subr-x)
+(require 'url)
+(require 'url-http)
+
 
 (defgroup tabby nil
-  "Minor mode for using the Tabby AI coding assistant"
+  "Minor mode for the Tabby AI coding assistant."
   :link '(url-link "htps://tabby.tabbyml.com")
   :group 'programming)
 
@@ -18,7 +23,7 @@
   :group 'tabby)
 
 (defcustom tabby-completion-function 'completing-read
-  "Function to use when selection a completion"
+  "Function to use when selection a completion."
   :type 'symbol
   :group 'tabby)
 
@@ -49,13 +54,14 @@
                  (suffix . ,suffix)))))
 
 (defun tabby--get-completions (buffer lang prefix suffix callback)
-  "Send a completions request to the Tabby API."
+  "Async get completions for BUFFER using LANG, PREFIX and SUFFIX.
+When the request completes, CALLBACK will be invoked with the response."
   (let* ((request (tabby--completions-request lang prefix suffix))
          (url-request-method "POST")
          (url-request-extra-headers `(("Content-Type" . "application/json")))
          (url-request-data (json-encode request)))
     (url-retrieve (tabby--completions-url)
-                  (lambda (status)
+                  (lambda (_status)
                     (goto-char url-http-end-of-headers)
                     (let ((response (json-read)))
                       (funcall callback buffer response))))))
@@ -76,10 +82,10 @@ See https://code.visualstudio.com/docs/languages/identifiers."
   (alist-get major-mode tabby-mode-language-alist))
 
 (defun tabby-complete ()
-  "Ask Tabby for completion suggestions on the text around point."
+  "Ask Tabby for completion suggestions for the text around point."
   (interactive)
   (when (not tabby-api-url)
-    (error "Please configure the URL for your Tabby server. See customizable variable `tabby-api-url`."))
+    (error "Please configure the URL for your Tabby server. See customizable variable `tabby-api-url`"))
   (let* ((lang (tabby--determine-language))
          (prefix (buffer-substring (point-min) (point)))
          (suffix (when (< (point) (point-max))
@@ -89,6 +95,9 @@ See https://code.visualstudio.com/docs/languages/identifiers."
       (message "Unable to determine language for current buffer."))))
 
 (define-minor-mode tabby-mode
-  "A mode for Tabby")
+  "A minor mode for Tabby.")
 
 (provide 'tabby-mode)
+
+;;; tabby-mode.el ends here
+
