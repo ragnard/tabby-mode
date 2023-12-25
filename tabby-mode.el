@@ -1,8 +1,12 @@
-;;; tabby-mode.el --- Minor mode for the Tabby AI coding assistant. -*- lexical-binding: t -*-
+;;; tabby-mode.el --- Minor mode for the Tabby AI coding assistant -*- lexical-binding: t -*-
 
 ;;; Commentary:
 
-;; Author: Ragnar Dahlén
+;; Author: Ragnar Dahlén <r.dahlen@gmail.com>
+;; URL: https://github.com/ragnard/tabby-mode
+;; Package-Requires: ((emacs "25.1"))
+;; Version: 1.0
+;; Keywords: tools, convenience
 
 ;;; Code:
 
@@ -11,6 +15,8 @@
 (require 'url)
 (require 'url-http)
 
+(eval-when-compile
+  (defvar url-http-end-of-headers))
 
 (defgroup tabby nil
   "Minor mode for the Tabby AI coding assistant."
