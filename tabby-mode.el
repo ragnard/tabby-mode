@@ -12,7 +12,7 @@
   :link '(url-link "htps://tabby.tabbyml.com")
   :group 'programming)
 
-(defcustom tabby-api-url "https://localhost:8080/"
+(defcustom tabby-api-url nil
   "URL to Tabby API."
   :type 'string
   :group 'tabby)
@@ -78,6 +78,8 @@ See https://code.visualstudio.com/docs/languages/identifiers."
 (defun tabby-complete ()
   "Ask Tabby for completion suggestions on the text around point."
   (interactive)
+  (when (not tabby-api-url)
+    (error "Please configure the URL for your Tabby server. See customizable variable `tabby-api-url`."))
   (let* ((lang (tabby--determine-language))
          (prefix (buffer-substring (point-min) (point)))
          (suffix (when (< (point) (point-max))
