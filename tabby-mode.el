@@ -1,12 +1,20 @@
 ;;; tabby-mode.el --- Minor mode for the Tabby AI coding assistant -*- lexical-binding: t -*-
 
-;;; Commentary:
+;; Copyright (C) 2023 Authors
+;; SPDX-License-Identifier: Apache-2.0
 
 ;; Author: Ragnar Dahlén <r.dahlen@gmail.com>
 ;; URL: https://github.com/ragnard/tabby-mode
 ;; Package-Requires: ((emacs "25.1"))
 ;; Version: 1.0
 ;; Keywords: tools, convenience
+
+;;; Commentary:
+
+;; This package provides a simple integration with the Tabby AI coding
+;; assistant. A single interactive function, `tabby-complete`, can be
+;; used to send the coding context to a Tabby API instance, and select
+;; a suggested code change.
 
 ;;; Code:
 
@@ -95,7 +103,7 @@ See https://code.visualstudio.com/docs/languages/identifiers."
     (error "Please configure the URL for your Tabby server. See customizable variable `tabby-api-url`"))
   (let* ((lang (tabby--determine-language))
          (prefix (buffer-substring (point-min) (point)))
-         (suffix (when (< (point) (point-max))
+         (suffix (unless (eobp)
                    (buffer-substring (+ (point) 1) (point-max)))))
     (if lang
         (tabby--get-completions (current-buffer) lang prefix suffix 'tabby--handle-completion-response)
