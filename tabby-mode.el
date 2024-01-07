@@ -110,7 +110,8 @@ See https://code.visualstudio.com/docs/languages/identifiers."
       (message "Unable to determine language for current buffer."))))
 
 (define-minor-mode tabby-mode
-  "A minor mode for the Tabby AI coding assistant.")
+  "A minor mode for the Tabby AI coding assistant."
+  :keymap '((["C-<tab>"] . tabby-complete)))
 
 (provide 'tabby-mode)
 
